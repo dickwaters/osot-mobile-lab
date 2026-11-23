@@ -125,12 +125,14 @@ public class AppUpdaterPlugin extends Plugin {
 
     private void launchInstaller(Context ctx, File apkFile) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !ctx.getPackageManager().canRequestPackageInstalls()) {
+            emitProgress(100, apkFile.length(), apkFile.length(), "请先开启「允许安装未知应用」，开启后返回再点安装");
             Intent permIntent = new Intent(
                 Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
                 Uri.parse("package:" + ctx.getPackageName())
             );
             permIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             ctx.startActivity(permIntent);
+            return;
         }
 
         Uri apkUri = FileProvider.getUriForFile(ctx, ctx.getPackageName() + ".fileprovider", apkFile);

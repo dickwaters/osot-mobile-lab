@@ -124,12 +124,29 @@ export function base64ToUint8(b64: string): Uint8Array {
   return out;
 }
 
+let nativeAudioLevelHandle: { remove: () => Promise<void> } | null = null;
+let nativeDownloadHandle: { remove: () => Promise<void> } | null = null;
+
+export async function attachDownloadProgressListener(
+  cb: (info: { progress: number; downloadedBytes: number; totalBytes: number; status: string }) => void
+): Promise<void> {
+  if (nativeDownloadHandle) {
+    try { await nativeDownloadHandle.remove(); } catch {}
+    nativeDownloadHandle = null;
+  }
+  nativeDownloadHandle = await AppUpdaterPlugin.addListener('downloadProgress', cb);
+}
+
 export async function startDryRecording(onLevel?: (db: number, clipped: boolean) => void): Promise<void> {
   if (isNativeAndroid()) {
     const perm = await WavRecorderPlugin.requestPermissions();
     if (!perm.granted) throw new Error('未获得麦克风录音权限，请在系统设置中允许录音');
+    if (nativeAudioLevelHandle) {
+      try { await nativeAudioLevelHandle.remove(); } catch {}
+      nativeAudioLevelHandle = null;
+    }
     if (onLevel) {
-      await WavRecorderPlugin.addListener('audioLevel', (info) => onLevel(info.db, info.clipped));
+      nativeAudioLevelHandle = await WavRecorderPlugin.addListener('audioLevel', (info) => onLevel(info.db, info.clipped));
     }
     await WavRecorderPlugin.startRecording();
     return;

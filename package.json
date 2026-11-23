@@ -1,6 +1,6 @@
 {
   "name": "osot-mobile-lab",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "OSOT 播音科研移动端实验与标注工作台 (Android)",
   "type": "module",

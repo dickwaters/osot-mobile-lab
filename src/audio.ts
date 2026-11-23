@@ -60,15 +60,29 @@ export function playClip(
     options?.onEnd?.();
   };
 
-  audio.onloadedmetadata = () => {
-    if (startSec > 0 && startSec < audio.duration) {
-      audio.currentTime = startSec;
+  let started = false;
+  const startPlayback = () => {
+    if (started || currentAudio !== audio) return;
+    started = true;
+    if (startSec > 0 && isFinite(audio.duration) && startSec < audio.duration) {
+      try { audio.currentTime = startSec; } catch {}
     }
     audio.play().then(() => {
       rafId = window.requestAnimationFrame(tick);
+      if (endSec !== undefined && endSec > startSec) {
+        const ms = ((endSec - startSec) / (audio.playbackRate || 1)) * 1000 + 180;
+        sliceStopTimer = window.setTimeout(() => {
+          if (currentAudio === audio) {
+            stopAudio();
+            options?.onEnd?.();
+          }
+        }, ms);
+      }
     }).catch(() => {});
   };
 
+  audio.onloadedmetadata = startPlayback;
+  audio.oncanplay = startPlayback;
   audio.load();
 }
 

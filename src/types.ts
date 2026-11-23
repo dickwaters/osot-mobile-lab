@@ -1,5 +1,5 @@
-export const APP_VERSION = '1.0.0';
-export const APP_VERSION_CODE = 10000;
+export const APP_VERSION = '1.0.1';
+export const APP_VERSION_CODE = 10001;
 export const GITHUB_REPO = 'dickwaters/osot-mobile-lab';
 
 export type TabId = 'home' | 'e2_f0' | 'e4_rec' | 'e4_stress' | 'e5_rec' | 'e5_boundary' | 'e7_trial' | 'export' | 'update';
