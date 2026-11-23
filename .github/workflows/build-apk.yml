@@ -1,0 +1,108 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: false
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install dependencies & build web bundle
+        run: |
+          npm ci
+          npm run build
+          npx cap sync android
+
+      - name: Compute versionName & versionCode from tag
+        id: ver
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.release_tag }}" ]; then
+            TAG="${{ github.event.inputs.release_tag }}"
+          fi
+          CLEAN="${TAG#v}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${CLEAN%%-*}"
+          MAJOR=${MAJOR:-1}
+          MINOR=${MINOR:-0}
+          PATCH=${PATCH:-0}
+          VCODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "vname=${CLEAN}" >> "$GITHUB_OUTPUT"
+          echo "vcode=${VCODE}" >> "$GITHUB_OUTPUT"
+
+      - name: Decode Release Keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > android/app/osot-release.jks
+            echo "KEYSTORE_FILE=$GITHUB_WORKSPACE/android/app/osot-release.jks" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build Signed Release APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease \
+            -PAPP_VERSION_NAME="${{ steps.ver.outputs.vname }}" \
+            -PAPP_VERSION_CODE="${{ steps.ver.outputs.vcode }}"
+
+      - name: Rename APK Artifact
+        run: |
+          SRC="android/app/build/outputs/apk/release/app-release.apk"
+          if [ ! -f "$SRC" ]; then
+            SRC="android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          fi
+          cp "$SRC" "osot-mobile-lab-${{ steps.ver.outputs.tag }}.apk"
+          ls -lh "osot-mobile-lab-${{ steps.ver.outputs.tag }}.apk"
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: osot-mobile-lab-${{ steps.ver.outputs.tag }}
+          path: osot-mobile-lab-${{ steps.ver.outputs.tag }}.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: "OSOT 声笺实验台 ${{ steps.ver.outputs.tag }}"
+          body: |
+            ## OSOT 声笺实验台 (${{ steps.ver.outputs.tag }})
+            - 内置 6 大顺序实验模块（E2 F0 抽检 / E4 受控干声棚 / E4 重音双盲 / E5 停连干声棚 / E5 全接点停连 / E7 省工对照与盲审）
+            - 内置 38 条 E2 实音切片 + 20 条真实名家自然短语（总包仅 ~2MB）
+            - 原生 16kHz 无损干声 WAV 录制（严禁 Demucs）
+            - 一键导出 `.zip` / `.json` 给电脑 `import_mobile_pack.py` 直接分析
+            - 应用内实时检查更新与一键安装覆盖升级（同密钥签名，保留本地标注数据）
+          files: |
+            osot-mobile-lab-${{ steps.ver.outputs.tag }}.apk

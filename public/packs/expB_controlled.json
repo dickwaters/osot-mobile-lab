@@ -1,0 +1,95 @@
+{
+  "experiment": "OSOT_Phase2_Step4_ExpB_Controlled_Boundary_Prompts",
+  "version": "expB-prompts-v1.0",
+  "design": "4 speakers x 10 sentences x 4 treatments = 160 utterances (dry clean only, demucs_applied=false)",
+  "treatments": [
+    {
+      "treatment_id": "direct_link",
+      "label_cn": "直连",
+      "instruction": "标定接点处自然顺滑直连，语流紧凑不断裂、不做刻意气口或拖音转折。"
+    },
+    {
+      "treatment_id": "curved_link",
+      "label_cn": "曲连（藕断丝连）",
+      "instruction": "标定接点处几乎不留静音空隙，但通过前字拉长、音高转折或气声过渡听出明显分组。"
+    },
+    {
+      "treatment_id": "rising_pause",
+      "label_cn": "扬停（声断气连/期待下文）",
+      "instruction": "标定接点处做明显停顿，但前字尾音微扬或悬住，让听众明确感到话没说完、期待下文。"
+    },
+    {
+      "treatment_id": "falling_pause",
+      "label_cn": "落停（收束完结）",
+      "instruction": "标定接点处做明显停顿，前字音高沉落收束，让听众明确感到意群在此落稳。"
+    }
+  ],
+  "sentences": [
+    {
+      "text_id": "expB_s01",
+      "text": "夜色已经很深了，远处的灯光却依然亮着。",
+      "target_junction_after": "深了",
+      "trap_type": "neutral_baseline"
+    },
+    {
+      "text_id": "expB_s02",
+      "text": "他慢慢放下手中的信，抬头望向窗外的雨。",
+      "target_junction_after": "的信",
+      "trap_type": "tone4_falling_trap",
+      "trap_note": "“信”(去声)易与落停混淆"
+    },
+    {
+      "text_id": "expB_s03",
+      "text": "我们必须立刻出发，才能在天黑前赶到。",
+      "target_junction_after": "出发",
+      "trap_type": "no_punc_mid_clause"
+    },
+    {
+      "text_id": "expB_s04",
+      "text": "老李买好早点，顺手递给身旁的小女孩。",
+      "target_junction_after": "早点",
+      "trap_type": "tone3_sandhi_trap",
+      "trap_note": "“买好早点”含连续三声变调"
+    },
+    {
+      "text_id": "expB_s05",
+      "text": "春风吹过山谷，唤醒了沉睡整冬的溪水。",
+      "target_junction_after": "山谷",
+      "trap_type": "tone3_boundary"
+    },
+    {
+      "text_id": "expB_s06",
+      "text": "这并非一次偶然的失误，而是长期忽视的结果。",
+      "target_junction_after": "失误",
+      "trap_type": "tone4_falling_trap",
+      "trap_note": "“误”(去声)检验扬停抗四声干扰"
+    },
+    {
+      "text_id": "expB_s07",
+      "text": "广场上人群渐渐散去，只留下几盏微弱的路灯。",
+      "target_junction_after": "散去",
+      "trap_type": "tone4_falling_trap",
+      "trap_note": "“散去”(双去声)检验扬停/曲连"
+    },
+    {
+      "text_id": "expB_s08",
+      "text": "请把这份材料仔细核对一遍，确认无误再提交。",
+      "target_junction_after": "一遍",
+      "trap_type": "tone4_falling_trap",
+      "trap_note": "“遍”(去声)检验声调条件化F0"
+    },
+    {
+      "text_id": "expB_s09",
+      "text": "山雨欲来风满楼，空气里弥漫着潮湿的泥土味。",
+      "target_junction_after": "满楼",
+      "trap_type": "classical_poetry"
+    },
+    {
+      "text_id": "expB_s10",
+      "text": "只要脚步不停，再远的路也终究会被走完。",
+      "target_junction_after": "不停",
+      "trap_type": "tone2_rising_trap",
+      "trap_note": "“停”(阳平)易与扬停混淆"
+    }
+  ]
+}

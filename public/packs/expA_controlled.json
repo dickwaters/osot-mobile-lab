@@ -1,0 +1,105 @@
+{
+  "experiment": "OSOT_Phase2_Step3_ExpA_Controlled_Stress_Prompts",
+  "version": "expA-prompts-v1.0",
+  "design": "4 speakers x 12 sentences x 4 conditions = 192 utterances (dry clean only, demucs_applied=false)",
+  "conditions": [
+    {
+      "condition_id": "neutral",
+      "label_cn": "中性平读",
+      "instruction": "自然平稳播读整句，不做刻意重音强调，作为同文本基线与 PFC 配对参照。"
+    },
+    {
+      "condition_id": "strong_stress",
+      "label_cn": "强读重音",
+      "instruction": "通过提高音量、拉高音高跨度与适度延长，重读目标焦点词（如“必须”“绝对”“千万”）。"
+    },
+    {
+      "condition_id": "soft_stress",
+      "label_cn": "轻读/虚声重音",
+      "instruction": "刻意压低音量（ΔE < 0），同时微幅放慢拉长（ΔD > 0）或配合前微停/气声化，用“以轻衬重”突出目标焦点词。"
+    },
+    {
+      "condition_id": "ordinary_weak",
+      "label_cn": "普通弱读（困难负例）",
+      "instruction": "自然语流中非焦点虚词/轻声/次要修饰词（ΔE < 0 且 ΔD < 0），音量轻且一带而过，绝非重音。"
+    }
+  ],
+  "sentences": [
+    {
+      "text_id": "expA_s01",
+      "text": "今天我们必须把这个问题彻底查清楚。",
+      "focus_span": "必须",
+      "weak_span": "把这"
+    },
+    {
+      "text_id": "expA_s02",
+      "text": "风雪虽然很大，他却一步也没有退缩。",
+      "focus_span": "一步",
+      "weak_span": "虽然"
+    },
+    {
+      "text_id": "expA_s03",
+      "text": "夜色渐渐深了，远处只剩下一盏微弱的灯。",
+      "focus_span": "一盏",
+      "weak_span": "渐渐"
+    },
+    {
+      "text_id": "expA_s04",
+      "text": "不是别人不想帮忙，而是这件事确实太难了。",
+      "focus_span": "确实",
+      "weak_span": "别人"
+    },
+    {
+      "text_id": "expA_s05",
+      "text": "请记住，真正的勇气往往藏在沉默之中。",
+      "focus_span": "沉默",
+      "weak_span": "往往"
+    },
+    {
+      "text_id": "expA_s06",
+      "text": "那一刻，整个礼堂安静得几乎能听见呼吸声。",
+      "focus_span": "安静",
+      "weak_span": "几乎"
+    },
+    {
+      "text_id": "expA_s07",
+      "text": "无论前方还有多少困难，我们都要按时出发。",
+      "focus_span": "按时",
+      "weak_span": "多少"
+    },
+    {
+      "text_id": "expA_s08",
+      "text": "她轻轻合上书本，窗外的雨已经停了。",
+      "focus_span": "轻轻",
+      "weak_span": "已经"
+    },
+    {
+      "text_id": "expA_s09",
+      "text": "这项技术的关键不在于速度，而在于稳定性。",
+      "focus_span": "稳定性",
+      "weak_span": "在于"
+    },
+    {
+      "text_id": "expA_s10",
+      "text": "谁也没有想到，最后的转折竟然发生在这里。",
+      "focus_span": "竟然",
+      "weak_span": "最后"
+    },
+    {
+      "text_id": "expA_s11",
+      "text": "别急着下结论，先把这组实验数据核对一遍。",
+      "focus_span": "核对",
+      "weak_span": "急着"
+    },
+    {
+      "text_id": "expA_s12",
+      "text": "多年以后再回首，那些微小的坚持才最动人。",
+      "focus_span": "微小",
+      "weak_span": "以后"
+    }
+  ],
+  "ecological_corpus_plan": {
+    "target_phrases": "40-60 phrases from reviewed dry master recordings (岳阳楼记/滕王阁序/离骚)",
+    "raters_required": ">= 2 blind raters on Layer 2 perceptual prominence (target kappa >= 0.60 via /api/qa/iaa)"
+  }
+}
